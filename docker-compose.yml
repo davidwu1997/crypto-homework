@@ -1,0 +1,49 @@
+version: '3.4'
+
+services:
+  server:
+    image: davidwu1997/crypto
+    build:
+      context: .
+      dockerfile: build/Dockerfile
+    command: server
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      - PROJ_DIR=/crypto
+      - DB_MASTER_CONFIG_ADDRESS=db:3306
+    depends_on:
+      db:
+        condition: service_healthy
+
+  migrate:
+    image: davidwu1997/crypto
+    build:
+      context: .
+      dockerfile: build/Dockerfile
+    command: migrate
+    environment:
+      - PROJ_DIR=/crypto
+      - DB_MASTER_CONFIG_ADDRESS=db:3306
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    container_name: db
+    image: mysql
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: crypto
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test

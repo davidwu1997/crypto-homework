@@ -1,0 +1,18 @@
+logger:
+  level: "debug"
+  format: console # json, console
+  name: "Local-Test"
+  env: "DEV"
+
+db_master_config:
+  address: '127.0.0.1:3306'
+  username: 'test'
+  password: 'test'
+  database: 'crypto'
+  log_mode: true
+  max_idle: 3
+  max_open: 10
+  conn_max_life_min: 15
+
+gin_config:
+  port: 8080
